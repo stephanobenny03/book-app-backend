@@ -1,0 +1,1386 @@
+================================================================================
+MOBILE APPLICATION DEVELOPMENT LAB (20MCA243) - LAB RECORD JAVA CODES & SETUP
+================================================================================
+
+TABLE OF CONTENTS:
+1. Develop an Android application to demonstrate Activity Life Cycle
+2. Implement validations on various UI controls
+3. Implement basic arithmetic operations of a simple calculator using Button controls
+4. Design a Login Form with user name and password using Linear Layout and Toast valid credentials
+5. Design a registration activity and store registration details in local memory of phone using Intents and Shared Preferences
+6. Create a Facebook page using RelativeLayout; set properties using .xml file
+7. Develop an application that toggles image using FrameLayout
+8. Implement Adapters and perform exception handling
+9. Implement Intent to navigate between multiple activities
+10. Develop application that works with explicit intents
+11. Implement Options Menu to navigate to activities
+12. Develop an application that uses ArrayAdapter with ListView
+13. Develop an application that use GridView with images and display Alert box on selection
+14. Develop an application that implements Spinner component and perform event handling
+15. Create database using SQLite and perform INSERT, SELECT, UPDATE and DELETE on SQLite database
+
+================================================================================
+EXPERIMENT 1
+================================================================================
+AIM:
+Develop an Android application to demonstrate Activity Life Cycle.
+
+README / PREREQUISITES:
+1. Layout:
+   - Ensure `activity_main.xml` exists with a root layout having `android:id="@+id/main"`.
+   - Default TextView can remain as is.
+2. AndroidManifest.xml:
+   - Ensure `MainActivity` is declared with the MAIN and LAUNCHER intent-filter:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.myapplication;
+
+import android.os.Bundle;
+import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        Toast.makeText(getApplicationContext(), "onCreate", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Toast.makeText(getApplicationContext(), "onStart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Toast.makeText(getApplicationContext(), "onPause", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Toast.makeText(getApplicationContext(), "onRestart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(getApplicationContext(), "onResume", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(getApplicationContext(), "onDestroy", Toast.LENGTH_SHORT).show();
+    }
+}
+
+
+================================================================================
+EXPERIMENT 2
+================================================================================
+AIM:
+Implement validations on various UI controls.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - EditText for username: `android:id="@+id/username"`
+   - EditText for password: `android:id="@+id/password"`
+   - Button for Signin: `android:id="@+id/signin"`
+   - TextView for message/display: `android:id="@+id/tv2"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.validation;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    EditText username, password;
+    TextView tv2;
+    Button signin;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        username = findViewById(R.id.username);
+        password = findViewById(R.id.password);
+        tv2 = findViewById(R.id.tv2);
+        signin = findViewById(R.id.signin);
+
+        signin.setOnClickListener(view -> {
+            String uname = username.getText().toString();
+            String pass = password.getText().toString();
+
+            if (uname.length() == 0) {
+                username.setError("Username is required");
+            }
+
+            if (pass.length() == 0) {
+                password.setError("Password is required");
+            } else if (pass.length() < 8) {
+                password.setError("Password must be minimum 8 characters");
+            }
+
+            if (uname.equals("admin123") && pass.equals("admin123")) {
+                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Login Unsuccessful", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+}
+
+
+================================================================================
+EXPERIMENT 3
+================================================================================
+AIM:
+Implement basic arithmetic operations of a simple calculator using Button controls.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - ConstraintLayout root ID: `android:id="@+id/main"`
+   - EditText for first number: `android:id="@+id/num1"`
+   - EditText for second number: `android:id="@+id/num2"`
+   - Button for Add: `android:id="@+id/btnAdd"`
+   - Button for Subtract: `android:id="@+id/btnSub"`
+   - Button for Multiply: `android:id="@+id/btnMul"`
+   - Button for Divide: `android:id="@+id/btnDiv"`
+   - TextView for displaying result: `android:id="@+id/result"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.calculator;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+    EditText num1, num2;
+    Button btnAdd, btnSub, btnMul, btnDiv;
+    TextView result;
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        num1 = findViewById(R.id.num1);
+        num2 = findViewById(R.id.num2);
+        btnAdd = findViewById(R.id.btnAdd);
+        btnSub = findViewById(R.id.btnSub);
+        btnMul = findViewById(R.id.btnMul);
+        btnDiv = findViewById(R.id.btnDiv);
+        result = findViewById(R.id.result);
+
+        btnAdd.setOnClickListener(view -> {
+            int a = Integer.parseInt(num1.getText().toString());
+            int b = Integer.parseInt(num2.getText().toString());
+            int res = a + b;
+            result.setText("RESULT=" + res);
+        });
+
+        btnSub.setOnClickListener(view -> {
+            int a = Integer.parseInt(num1.getText().toString());
+            int b = Integer.parseInt(num2.getText().toString());
+            int res = a - b;
+            result.setText("RESULT=" + res);
+        });
+
+        btnMul.setOnClickListener(view -> {
+            int a = Integer.parseInt(num1.getText().toString());
+            int b = Integer.parseInt(num2.getText().toString());
+            int res = a * b;
+            result.setText("RESULT=" + res);
+        });
+
+        btnDiv.setOnClickListener(view -> {
+            int a = Integer.parseInt(num1.getText().toString());
+            int b = Integer.parseInt(num2.getText().toString());
+            if (b != 0) {
+                int res = a / b;
+                result.setText("RESULT=" + res);
+            } else {
+                result.setText("Cannot divide by 0");
+            }
+        });
+    }
+}
+
+
+================================================================================
+EXPERIMENT 4
+================================================================================
+AIM:
+Design a Login Form with user name and password using Linear Layout and Toast valid credentials.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - ConstraintLayout/LinearLayout root with `android:id="@+id/main"`
+   - EditText for Username: `android:id="@+id/et1"`
+   - EditText for Password: `android:id="@+id/et2"`
+   - Button for Login: `android:id="@+id/btn1"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.mylogin;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    EditText e1, e2;
+    Button b1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        e1 = findViewById(R.id.et1);
+        e2 = findViewById(R.id.et2);
+        b1 = findViewById(R.id.btn1);
+
+        b1.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        String uname, psw;
+        uname = e1.getText().toString();
+        psw = e2.getText().toString();
+
+        if (uname.equals("naz") && psw.equals("123")) {
+            Toast.makeText(this, "Login Successful!!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+
+================================================================================
+EXPERIMENT 5
+================================================================================
+AIM:
+Design a registration activity and store registration details in local memory of phone using Intents and Shared Preferences.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - ConstraintLayout root ID: `android:id="@+id/main"`
+   - TextView for welcome: `android:id="@+id/tv1"`
+   - EditText for name: `android:id="@+id/text1"`
+   - EditText for phone: `android:id="@+id/ed2"`
+   - Button for save: `android:id="@+id/btn1"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.sharedpref;
+
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+    TextView tv1;
+    EditText text1, phn;
+    Button btn1;
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        tv1 = findViewById(R.id.tv1);
+        text1 = findViewById(R.id.text1);
+        btn1 = findViewById(R.id.btn1);
+        phn = findViewById(R.id.ed2);
+
+        btn1.setOnClickListener(view -> {
+            String text = text1.getText().toString();
+            String phone = phn.getText().toString();
+
+            if (text.length() == 0) {
+                text1.setError("Text is required");
+                return;
+            }
+            if (phone.length() == 0) {
+                phn.setError("Phone number required");
+                return;
+            }
+            if (phone.length() != 10) {
+                phn.setError("Phone number must be 10 characters");
+                return;
+            }
+
+            SharedPreferences.Editor editor = getSharedPreferences("mypref", MODE_PRIVATE).edit();
+            editor.putString("uname", text);
+            editor.putString("phone", phone);
+            editor.apply();
+
+            tv1.setText("Welcome " + text + " !!");
+        });
+
+        SharedPreferences spf = getSharedPreferences("mypref", MODE_PRIVATE);
+        String text = spf.getString("uname", null);
+        if (text != null) {
+            tv1.setText("Welcome Back " + text);
+        }
+    }
+}
+
+
+================================================================================
+EXPERIMENT 6
+================================================================================
+AIM:
+Create a Facebook page using RelativeLayout; set properties using .xml file.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - RelativeLayout root
+   - Logo TextView: `android:id="@+id/txtLogo"`
+   - EditText for email/phone: `android:id="@+id/edtUsername"`
+   - EditText for password: `android:id="@+id/edtPassword"`
+   - Button for Log In: `android:id="@+id/btnLogin"`
+   - TextView for Forgot password: `android:id="@+id/txtForgot"`
+   - Button for Create New Account: `android:id="@+id/btnCreateAccount"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.facebook;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    EditText edtUsername, edtPassword;
+    Button btnLogin, btnCreateAccount;
+    TextView txtForgot;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        edtUsername = findViewById(R.id.edtUsername);
+        edtPassword = findViewById(R.id.edtPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnCreateAccount = findViewById(R.id.btnCreateAccount);
+        txtForgot = findViewById(R.id.txtForgot);
+
+        btnLogin.setOnClickListener(v -> {
+            String username = edtUsername.getText().toString();
+            String password = edtPassword.getText().toString();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        txtForgot.setOnClickListener(v -> {
+            Toast.makeText(this, "Forgot password clicked", Toast.LENGTH_SHORT).show();
+        });
+
+        btnCreateAccount.setOnClickListener(v -> {
+            Toast.makeText(this, "Create new account clicked", Toast.LENGTH_SHORT).show();
+        });
+    }
+}
+
+
+================================================================================
+EXPERIMENT 7
+================================================================================
+AIM:
+Develop an application that toggles image using FrameLayout.
+
+README / PREREQUISITES:
+1. Resources / Drawables:
+   - Add two images inside `res/drawable/` directory named:
+     - `on.png` (or `on.jpg`)
+     - `off.png` (or `off.jpg`)
+2. Layout Setup (`activity_main.xml`):
+   - ImageView 1: `android:id="@+id/image1"`
+   - ImageView 2: `android:id="@+id/image2"`
+   - ToggleButton: `android:id="@+id/toggleButton"`
+3. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.toggleimage;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ToggleButton;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    private ImageView image1, image2;
+    private ToggleButton toggleButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        image1 = findViewById(R.id.image1);
+        image2 = findViewById(R.id.image2);
+        toggleButton = findViewById(R.id.toggleButton);
+
+        toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                image1.setVisibility(View.GONE);
+                image2.setVisibility(View.VISIBLE);
+            } else {
+                image1.setVisibility(View.VISIBLE);
+                image2.setVisibility(View.GONE);
+            }
+        });
+    }
+}
+
+
+================================================================================
+EXPERIMENT 8
+================================================================================
+AIM:
+Implement Adapters and perform exception handling.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - ListView: `android:id="@+id/listview"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.simpleadapter;
+
+import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        try {
+            ListView listView = findViewById(R.id.listview);
+            ArrayList<HashMap<String, String>> data = new ArrayList<>();
+
+            HashMap<String, String> item1 = new HashMap<>();
+            item1.put("title", "Apple");
+            item1.put("desc", "Red Fruit");
+            data.add(item1);
+
+            HashMap<String, String> item2 = new HashMap<>();
+            item2.put("title", "Banana");
+            item2.put("desc", "Yellow Fruit");
+            data.add(item2);
+
+            SimpleAdapter adapter = new SimpleAdapter(
+                this,
+                data,
+                android.R.layout.simple_list_item_2,
+                new String[]{"title", "desc"},
+                new int[]{android.R.id.text1, android.R.id.text2}
+            );
+
+            listView.setAdapter(adapter);
+
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                try {
+                    String selected = data.get(position).get("title");
+                    Toast.makeText(this, "You clicked: " + selected, Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Something went wrong: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+}
+
+
+================================================================================
+EXPERIMENT 9
+================================================================================
+AIM:
+Implement Intent to navigate between multiple activities.
+
+README / PREREQUISITES:
+1. Layout Setup:
+   - `activity_main.xml`: Root with `android:id="@+id/main"`, Button with `android:id="@+id/btn1"`.
+   - `activity_main2.xml`: Root with `android:id="@+id/main"`, Button with `android:id="@+id/btn2"`.
+2. AndroidManifest.xml (CRITICAL: BOTH ACTIVITIES MUST BE REGISTERED):
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   <activity
+       android:name=".MainActivity2"
+       android:exported="false" />
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.activitydemo;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    Button b1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        b1 = findViewById(R.id.btn1);
+        b1.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent i1 = new Intent(MainActivity.this, MainActivity2.class);
+        startActivity(i1);
+    }
+}
+
+--------------------------------------------------------------------------------
+Filename: MainActivity2.java
+--------------------------------------------------------------------------------
+package com.example.activitydemo;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity2 extends AppCompatActivity implements View.OnClickListener {
+    Button b2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main2);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        b2 = findViewById(R.id.btn2);
+        b2.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent i2 = new Intent(MainActivity2.this, MainActivity.class);
+        startActivity(i2);
+    }
+}
+
+
+================================================================================
+EXPERIMENT 10
+================================================================================
+AIM:
+Develop application that works with explicit intents.
+
+README / PREREQUISITES:
+1. Layout Setup:
+   - `activity_first.xml`:
+     - EditText for name: `android:id="@+id/edttxtname"`
+     - EditText for age: `android:id="@+id/edttxtage"`
+     - Button: `android:id="@+id/btngo"` with `android:onClick="showActivity"`
+   - `activity_second.xml`:
+     - TextView for display: `android:id="@+id/txtdisplay"`
+2. AndroidManifest.xml:
+   Register both `FirstActivity` and `SecondActivity`:
+   ```xml
+   <activity
+       android:name=".FirstActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   <activity
+       android:name=".SecondActivity"
+       android:exported="false" />
+   ```
+
+SOURCE CODE:
+Filename: FirstActivity.java
+--------------------------------------------------------------------------------
+package com.example.explicitintent;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class FirstActivity extends AppCompatActivity {
+    EditText name, age;
+    Button go;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_first);
+
+        name = findViewById(R.id.edttxtname);
+        age = findViewById(R.id.edttxtage);
+        go = findViewById(R.id.btngo);
+    }
+
+    public void showActivity(View v) {
+        String n = name.getText().toString();
+        int a = Integer.parseInt(age.getText().toString());
+        Intent i = new Intent(FirstActivity.this, SecondActivity.class);
+        i.putExtra("name", n);
+        i.putExtra("age", a);
+        startActivity(i);
+    }
+}
+
+--------------------------------------------------------------------------------
+Filename: SecondActivity.java
+--------------------------------------------------------------------------------
+package com.example.explicitintent;
+
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SecondActivity extends AppCompatActivity {
+    TextView t;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+
+        t = findViewById(R.id.txtdisplay);
+        String n = getIntent().getStringExtra("name");
+        int a = getIntent().getIntExtra("age", 0);
+        t.setText("Name: " + n + "\nAge: " + a);
+    }
+}
+
+
+================================================================================
+EXPERIMENT 11
+================================================================================
+AIM:
+Implement Options Menu to navigate to activities.
+
+README / PREREQUISITES:
+1. Menu Resource:
+   Create `res/menu/menu.xml` with:
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <menu xmlns:android="http://schemas.android.com/apk/res/android">
+       <item
+           android:id="@+id/about"
+           android:title="About" />
+       <item
+           android:id="@+id/help"
+           android:title="Help" />
+   </menu>
+   ```
+2. App Theme:
+   Ensure your theme inherits from an ActionBar theme (e.g., `Theme.MaterialComponents.DayNight.DarkActionBar` or `Theme.AppCompat.Light.DarkActionBar`) in `res/values/themes.xml`.
+3. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.menudemoapp;
+
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int selectedItem = item.getItemId();
+        if (selectedItem == R.id.about) {
+            Toast.makeText(this, "You have selected About Option", Toast.LENGTH_LONG).show();
+        } else if (selectedItem == R.id.help) {
+            Toast.makeText(this, "You have selected Help Option", Toast.LENGTH_LONG).show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+    }
+}
+
+
+================================================================================
+EXPERIMENT 12
+================================================================================
+AIM:
+Develop an application that uses ArrayAdapter with ListView.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - ConstraintLayout root ID: `android:id="@+id/main"`
+   - ListView: `android:id="@+id/MylistView"`
+   - Selected Item display TextView: `android:id="@+id/txt1"`
+   - Header/Label TextView: `android:id="@+id/txt2"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.listviewdemoapp;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    ListView clist;
+    TextView t1, t2;
+    String[] countrylist = {"India", "China", "Australia", "America"};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        clist = findViewById(R.id.MylistView);
+        t1 = findViewById(R.id.txt1);
+        t2 = findViewById(R.id.txt2);
+
+        ArrayAdapter<String> myarrayadapter = new ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_1,
+            countrylist
+        );
+        clist.setAdapter(myarrayadapter);
+        clist.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Object selecteditem = clist.getItemAtPosition(position);
+        String s = selecteditem.toString();
+        t1.setText(s);
+    }
+}
+
+
+================================================================================
+EXPERIMENT 13
+================================================================================
+AIM:
+Develop an application that use GridView with images and display Alert box on selection.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - RelativeLayout root
+   - GridView: `android:id="@+id/gridView"`
+2. Android Built-in Drawables:
+   Uses standard Android system drawables (`android.R.drawable.ic_menu_*`), so no local drawable files are strictly required.
+3. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.gridviewapp;
+
+import android.app.AlertDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    GridView gridView;
+
+    int[] images = {
+        android.R.drawable.ic_menu_camera,
+        android.R.drawable.ic_menu_gallery,
+        android.R.drawable.ic_menu_compass,
+        android.R.drawable.ic_menu_manage,
+        android.R.drawable.ic_menu_search,
+        android.R.drawable.ic_menu_help
+    };
+
+    String[] names = {
+        "Camera", "Gallery", "Compass",
+        "Settings", "Search", "Help"
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        gridView = findViewById(R.id.gridView);
+        gridView.setAdapter(new ImageAdapter());
+
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+            new AlertDialog.Builder(MainActivity.this)
+                .setTitle(names[position])
+                .setMessage("You selected " + names[position])
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
+        });
+    }
+
+    class ImageAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return images.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return images[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null) {
+                imageView = new ImageView(MainActivity.this);
+                imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageView.setPadding(10, 10, 10, 10);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+            imageView.setImageResource(images[position]);
+            return imageView;
+        }
+    }
+}
+
+
+================================================================================
+EXPERIMENT 14
+================================================================================
+AIM:
+Develop an application that implements Spinner component and perform event handling.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - ConstraintLayout root
+   - Spinner: `android:id="@+id/spinner"`
+   - Optional TextView / MultiLine EditText as shown in the layout.
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.spinnerdemo;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    String[] country = {"India", "USA", "China", "Japan", "Other"};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Getting the instance of Spinner and applying OnItemSelectedListener on it
+        Spinner spin = findViewById(R.id.spinner);
+        spin.setOnItemSelectedListener(this);
+
+        // Creating the ArrayAdapter instance having the country list
+        ArrayAdapter<String> aa = new ArrayAdapter<>(
+            this,
+            android.R.layout.simple_spinner_item,
+            country
+        );
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Setting the ArrayAdapter data on the Spinner
+        spin.setAdapter(aa);
+    }
+
+    // Performing action onItemSelected and onNothingSelected
+    @Override
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
+        Toast.makeText(getApplicationContext(), country[position], Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // nothing to do
+    }
+}
+
+
+================================================================================
+EXPERIMENT 15
+================================================================================
+AIM:
+Create database using SQLite and perform INSERT, SELECT, UPDATE and DELETE on SQLite database.
+
+README / PREREQUISITES:
+1. Layout Setup (`activity_main.xml`):
+   - EditText for Rollno: `android:id="@+id/Rollno"`
+   - EditText for Name: `android:id="@+id/Name"`
+   - EditText for Marks: `android:id="@+id/Marks"`
+   - Button for Insert: `android:id="@+id/Insert"`
+   - Button for Delete: `android:id="@+id/Delete"`
+   - Button for Update: `android:id="@+id/Update"`
+   - Button for View: `android:id="@+id/View"`
+   - Button for View All: `android:id="@+id/ViewAll"`
+2. AndroidManifest.xml:
+   ```xml
+   <activity
+       android:name=".MainActivity"
+       android:exported="true">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="android.intent.category.LAUNCHER" />
+       </intent-filter>
+   </activity>
+   ```
+
+SOURCE CODE:
+Filename: MainActivity.java
+--------------------------------------------------------------------------------
+package com.example.sqlite_new_2024;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    EditText Rollno, Name, Marks;
+    Button Insert, Delete, Update, View, ViewAll;
+    SQLiteDatabase db;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Rollno = findViewById(R.id.Rollno);
+        Name = findViewById(R.id.Name);
+        Marks = findViewById(R.id.Marks);
+        Insert = findViewById(R.id.Insert);
+        Delete = findViewById(R.id.Delete);
+        Update = findViewById(R.id.Update);
+        View = findViewById(R.id.View);
+        ViewAll = findViewById(R.id.ViewAll);
+
+        db = openOrCreateDatabase("StudentDB", Context.MODE_PRIVATE, null);
+        db.execSQL("CREATE TABLE IF NOT EXISTS student(rollno TEXT, name TEXT, marks TEXT);");
+
+        Insert.setOnClickListener(v -> {
+            if (Rollno.getText().toString().trim().isEmpty() ||
+                Name.getText().toString().trim().isEmpty() ||
+                Marks.getText().toString().trim().isEmpty()) {
+                showMessage("Error", "Please enter all values");
+                return;
+            }
+            db.execSQL("INSERT INTO student VALUES(?,?,?);",
+                new String[]{Rollno.getText().toString(), Name.getText().toString(), Marks.getText().toString()});
+            showMessage("Success", "Record added");
+            clearText();
+        });
+
+        Delete.setOnClickListener(v -> {
+            if (Rollno.getText().toString().trim().isEmpty()) {
+                showMessage("Error", "Please enter Rollno");
+                return;
+            }
+            Cursor c = db.rawQuery("SELECT * FROM student WHERE rollno = ?",
+                new String[]{Rollno.getText().toString()});
+            if (c.moveToFirst()) {
+                db.execSQL("DELETE FROM student WHERE rollno = ?",
+                    new String[]{Rollno.getText().toString()});
+                showMessage("Success", "Record Deleted");
+            } else {
+                showMessage("Error", "Invalid Rollno");
+            }
+            c.close();
+            clearText();
+        });
+
+        Update.setOnClickListener(v -> {
+            if (Rollno.getText().toString().trim().isEmpty()) {
+                showMessage("Error", "Please enter Rollno");
+                return;
+            }
+            Cursor c = db.rawQuery("SELECT * FROM student WHERE rollno = ?",
+                new String[]{Rollno.getText().toString()});
+            if (c.moveToFirst()) {
+                db.execSQL("UPDATE student SET name = ?, marks = ? WHERE rollno = ?",
+                    new String[]{Name.getText().toString(), Marks.getText().toString(), Rollno.getText().toString()});
+                showMessage("Success", "Record Modified");
+            } else {
+                showMessage("Error", "Invalid Rollno");
+            }
+            c.close();
+            clearText();
+        });
+
+        View.setOnClickListener(v -> {
+            if (Rollno.getText().toString().trim().isEmpty()) {
+                showMessage("Error", "Please enter Rollno");
+                return;
+            }
+            Cursor c = db.rawQuery("SELECT * FROM student WHERE rollno = ?",
+                new String[]{Rollno.getText().toString()});
+            if (c.moveToFirst()) {
+                Name.setText(c.getString(1));
+                Marks.setText(c.getString(2));
+            } else {
+                showMessage("Error", "Invalid Rollno");
+                clearText();
+            }
+            c.close();
+        });
+
+        ViewAll.setOnClickListener(v -> {
+            Cursor c = db.rawQuery("SELECT * FROM student", null);
+            if (c.getCount() == 0) {
+                showMessage("Error", "No records found");
+                c.close();
+                return;
+            }
+            StringBuilder buffer = new StringBuilder();
+            while (c.moveToNext()) {
+                buffer.append("Rollno: ").append(c.getString(0)).append("\n");
+                buffer.append("Name: ").append(c.getString(1)).append("\n");
+                buffer.append("Marks: ").append(c.getString(2)).append("\n\n");
+            }
+            showMessage("Student Details", buffer.toString());
+            c.close();
+        });
+    }
+
+    public void showMessage(String title, String message) {
+        new AlertDialog.Builder(this)
+            .setCancelable(true)
+            .setTitle(title)
+            .setMessage(message)
+            .show();
+    }
+
+    public void clearText() {
+        Rollno.setText("");
+        Name.setText("");
+        Marks.setText("");
+        Rollno.requestFocus();
+    }
+}
