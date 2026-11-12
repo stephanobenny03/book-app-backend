@@ -1,0 +1,908 @@
+================================================================================
+DATA SCIENCE LAB (20MCA241) - LAB RECORD PYTHON CODES & SETUP
+================================================================================
+
+TABLE OF CONTENTS:
+1. Study on NumPy
+2. Pandas Practice Exercises
+3. Data Visualization with Matplotlib, Plotly, Seaborn
+4. Classification with KNN
+5. Naive Bayes Classification
+6. Decision Tree based Classification
+7. Linear Regression
+8. Multiple Linear Regression
+9. Classification with SVM
+10. Text Classification with SVM
+11. Feed Forward Networks
+12. Multilayer Perceptron Implementation
+13. K-Means Clustering
+14. Image Classification with CNN
+15. NLP - N-grams, POS Tagging
+
+================================================================================
+EXPERIMENT 1
+================================================================================
+AIM:
+To understand operations using NumPy.
+
+README / PREREQUISITES:
+1. Libraries:
+   - numpy
+   - Install (if needed): pip install numpy
+2. No dataset is required.
+
+SOURCE CODE:
+Filename: numpy_operations.py
+--------------------------------------------------------------------------------
+import numpy as np
+
+# Creating arrays
+a = np.array([10, 20, 30, 40])
+b = np.array([1, 2, 3, 4])
+print("Array A:", a)
+print("Array B:", b)
+
+# Basic arithmetic operations
+print("\nAddition:", a + b)
+print("Subtraction:", a - b)
+print("Multiplication:", a * b)
+print("Division:", a / b)
+
+# Array statistics
+print("\nMaximum of A:", np.max(a))
+print("Minimum of A:", np.min(a))
+print("Mean of A:", np.mean(a))
+print("Sum of A:", np.sum(a))
+
+# Reshaping an array
+c = np.arange(1, 10).reshape(3, 3)
+print("\nReshaped Array (3x3):\n", c)
+
+# Matrix operations
+print("\nTranspose of C:\n", c.T)
+print("Matrix Multiplication (C x C):\n", np.dot(c, c))
+
+
+================================================================================
+EXPERIMENT 2
+================================================================================
+AIM:
+To perform data manipulation and analysis using Pandas.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas
+   - Install (if needed): pip install pandas
+2. Dataset:
+   - `cars1.csv` with columns: Car, Model, Volume, Weight, CO2
+   - The record reads it from `/content/cars1.csv` (Google Colab). Change the
+     path if running locally.
+
+SOURCE CODE:
+Filename: pandas_exercises.py
+--------------------------------------------------------------------------------
+import pandas as pd
+
+cars=pd.read_csv('/content/cars1.csv')
+print(cars)
+
+cars.describe()
+print(cars.head(3))
+
+print(cars[0:2])
+
+my_dict = {
+"Name": ['Adam','Tom','John'],
+"Age": [21,22,22],
+"City": ['Ernakulam','Kannur','Kollam']
+}
+d=pd.DataFrame(my_dict)
+print(d)
+
+d.index=['A','B','C']
+print(d)
+
+
+================================================================================
+EXPERIMENT 3
+================================================================================
+AIM:
+To visualize and interpret data using Python plotting libraries.
+
+README / PREREQUISITES:
+1. Libraries:
+   - numpy, pandas, matplotlib, seaborn, plotly
+   - Install (if needed): pip install numpy pandas matplotlib seaborn plotly
+2. Datasets:
+   - `Iris - Iris.csv` (Id, SepalLengthCm, SepalWidthCm, PetalLengthCm,
+     PetalWidthCm, Species)
+   - `insurance.csv` (age, bmi, children, expenses, ...)
+   - The Bubble Plot and Pie Chart use the built-in plotly dataset
+     `px.data.iris()` (no file needed).
+
+SOURCE CODE:
+Filename: data_visualization.py
+--------------------------------------------------------------------------------
+import numpy as np
+import pandas as pd
+
+df = pd.read_csv("Iris - Iris.csv")
+df.describe()
+
+# histogram
+import matplotlib.pyplot as plt
+plt.figure(figsize=(20,7))
+x = df['SepalLengthCm']
+plt.hist(x,bins = 10,color = 'red')
+plt.title('SepalLength in Cm')
+plt.xlabel("SepalLength")
+plt.ylabel("Count")
+plt.show()
+
+# box plot
+data = df[['SepalLengthCm','SepalWidthCm','PetalLengthCm','PetalWidthCm']]
+plt.figure(figsize=(20,7))
+plt.boxplot(data)
+plt.show()
+
+# scatter plot
+import seaborn as sns
+x = df.iloc[:,[1]].values
+y = df.iloc[:,[2]].values
+plt.scatter(x,y,c = 'r',s = 15)
+
+df2 = pd.read_csv("insurance.csv")
+df2.describe()
+
+sns.scatterplot(x = 'age' , y = 'bmi' , hue = 'expenses' ,data = df2)
+
+# Facet Grid
+sns.FacetGrid(df, hue = 'Species',height = 6).map(
+    plt.scatter,'SepalLengthCm','PetalLengthCm').add_legend()
+plt.show()
+
+# Distribution Plot
+sns.displot(df,x = 'SepalLengthCm',kind = 'kde')
+
+# Scatter Matrix
+import plotly.express as px
+fig = px.scatter_matrix(df,
+                        dimensions=['SepalLengthCm','SepalWidthCm','PetalLengthCm','PetalWidthCm'],
+                        color='Species')
+fig.show()
+
+# Bubble Plot
+import plotly.express as px
+data = px.data.iris()
+figure = px.scatter(data, x="sepal_width", y="sepal_length", color="species",
+                    size='petal_length')
+figure.show()
+
+#Pie Chart
+iris= px.data.iris()
+iris_avg=iris["petal_width"].groupby(iris["species"]).mean()
+iris_avg
+
+iris_avg.plot.pie()
+
+
+================================================================================
+EXPERIMENT 4
+================================================================================
+AIM:
+To implement K-Nearest Neighbors algorithm for classification.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn
+   - Install (if needed): pip install pandas scikit-learn
+2. Dataset:
+   - `User_Data.csv` (User ID, Gender, Age, EstimatedSalary, Purchased)
+
+SOURCE CODE:
+Filename: knn_classification.py
+--------------------------------------------------------------------------------
+import pandas as pd
+df = pd.read_csv("User_Data.csv")
+print(df)
+
+#label encoding for y
+from sklearn.preprocessing import LabelEncoder
+label_encoder = LabelEncoder()
+df['Gender'] = label_encoder.fit_transform(df['Gender'])
+x = df.iloc[:,[0,1,2,3]].values
+y = df.iloc[:,4].values
+print(x)
+print(y)
+
+from sklearn.model_selection import train_test_split
+
+x_train , x_test ,y_train , y_test = train_test_split(
+x,y,test_size = 0.20 )
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.fit_transform(x_test)
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+classifier = KNeighborsClassifier( n_neighbors = 3 )
+classifier.fit(x_train,y_train)
+y_pred = classifier.predict(x_test)
+print(y_test)
+print('')
+print(y_pred)
+print('Accuracy Score : ',accuracy_score(y_pred,y_test))
+
+
+================================================================================
+EXPERIMENT 5
+================================================================================
+AIM:
+To apply Naive Bayes algorithm for predictive modeling.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn
+   - Install (if needed): pip install pandas scikit-learn
+2. Dataset:
+   - `Iris - Iris.csv`
+
+SOURCE CODE:
+Filename: naive_bayes.py
+--------------------------------------------------------------------------------
+import pandas as pd
+df = pd.read_csv("Iris - Iris.csv")
+print(df)
+
+x = df.iloc[:,:-1]
+y = df.iloc[:,-1]
+from sklearn.model_selection import train_test_split
+x_train , x_test , y_train, y_test = train_test_split(x,y,test_size = 0.25)
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.fit_transform(x_test)
+
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+classifier = GaussianNB()
+classifier.fit(x_train,y_train)
+y_pred = classifier.predict(x_test)
+print(y_test)
+print(' ')
+print(y_pred)
+print('Accuracy Score : ',accuracy_score(y_pred,y_test))
+print(' ')
+print(confusion_matrix(y_pred,y_test))
+
+
+================================================================================
+EXPERIMENT 6
+================================================================================
+AIM:
+To construct and evaluate decision tree classifiers.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn, matplotlib
+   - Install (if needed): pip install pandas scikit-learn matplotlib
+2. Dataset:
+   - `social_network_data.csv` (UserID, Gender, Age, EstimatedSalary,
+     Platform, DailyTimeSpent, Purchased)
+
+SOURCE CODE:
+Filename: decision_tree.py
+--------------------------------------------------------------------------------
+import pandas as pd
+df = pd.read_csv('social_network_data.csv')
+df
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['Gender'] = le.fit_transform(df['Gender'])
+df['Platform'] = le.fit_transform(df['Platform'])
+x = df.iloc[:,[1,2,3,5]].values
+y = df.iloc[:,-1].values
+
+print(x)
+print('----------------')
+print(y)
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.20,random_state=0)
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.fit_transform(x_test)
+from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+classifier = DecisionTreeClassifier(max_depth = 2,random_state=0)
+
+classifier.fit(x_train,y_train)
+plt.figure(figsize = (10,8))
+tree.plot_tree(classifier)
+
+from sklearn.metrics import accuracy_score,confusion_matrix
+y_pred = classifier.predict(x_test)
+print(y_pred)
+print('----------------')
+print(y_test)
+print('----------------')
+print('Confusion Matrix')
+print(confusion_matrix(y_test,y_pred))
+print('----------------')
+print('Accuracy Score:',accuracy_score(y_test,y_pred))
+
+
+================================================================================
+EXPERIMENT 7
+================================================================================
+AIM:
+To analyze relationships between variables using linear regression.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn, matplotlib
+   - Install (if needed): pip install pandas scikit-learn matplotlib
+2. Dataset:
+   - `salary_data.csv` (YearsExperience, Salary) - 30 rows
+
+SOURCE CODE:
+Filename: linear_regression.py
+--------------------------------------------------------------------------------
+import pandas as pd
+dataset = pd.read_csv("salary_data.csv")
+print(dataset)
+
+x = dataset.iloc[:,:-1].values
+y = dataset.iloc[:,-1].values
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2,random_state=0)
+print(x_train.shape)
+print(y_train.shape)
+
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(x_train,y_train)
+y_pred = regressor.predict(x_test)
+df = pd.DataFrame({"Real Values":y_test,"Predicted Values":y_pred})
+print(df)
+
+import matplotlib.pyplot as plt
+plt.scatter(x_test,y_test,color = 'red')
+plt.scatter(x_test,y_pred,color = 'green')
+plt.plot(x_train,regressor.predict(x_train),color = 'black')
+plt.title('Salary vs Experience (Test Set)')
+plt.xlabel('Years of Experience')
+plt.ylabel('Salary')
+plt.show()
+
+
+================================================================================
+EXPERIMENT 8
+================================================================================
+AIM:
+To perform prediction using multiple linear regression models.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn, matplotlib, seaborn
+   - Install (if needed): pip install pandas scikit-learn matplotlib seaborn
+2. Dataset:
+   - `cars1.csv` (Car, Model, Volume, Weight, CO2)
+   - The record reads it from `/content/cars1.csv` (Google Colab). Change the
+     path if running locally.
+3. Note:
+   - `sns.distplot` is deprecated in newer seaborn versions (it still runs
+     with a warning). Use `sns.kdeplot` as an alternative if it errors.
+
+SOURCE CODE:
+Filename: multiple_linear_regression.py
+--------------------------------------------------------------------------------
+import pandas as pd
+df = pd.read_csv("/content/cars1.csv")
+print(df)
+X = df[['Weight', 'Volume']]
+y = df['CO2']
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test= train_test_split(X, y,
+test_size= 0.25, random_state=0)
+from sklearn import linear_model
+regr = linear_model.LinearRegression()
+regr.fit(x_train, y_train)
+predictedCO2 = regr.predict(x_test)
+print(predictedCO2)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.distplot(y_test, hist=False, color='red', label='Actual CO2')
+sns.distplot(predictedCO2, hist=False, color='green',
+label='Predicted CO2')
+plt.title('Distribution of Actual vs Predicted CO2 Emissions')
+plt.xlabel('CO2 Emissions')
+plt.ylabel('Density')
+plt.legend()
+plt.show()
+
+
+================================================================================
+EXPERIMENT 9
+================================================================================
+AIM:
+To implement Support Vector Machine for classification tasks.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, numpy, scikit-learn
+   - Install (if needed): pip install pandas numpy scikit-learn
+2. Dataset:
+   - `Iris - Iris.csv`
+
+SOURCE CODE:
+Filename: svm_classification.py
+--------------------------------------------------------------------------------
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.svm import LinearSVC
+df = pd.read_csv("Iris - Iris.csv")
+df.describe()
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+df = pd.read_csv("Iris - Iris.csv")
+X = df.iloc[:,:-1]
+y = df.iloc[:,-1]
+x_train, x_test, y_train, y_test = train_test_split(X, y,
+test_size=0.2, random_state=1)
+pipe = Pipeline([
+('scaler', StandardScaler()),
+('model', LinearSVC())
+])
+model_svc = pipe.fit(x_train, y_train)
+svc_pred = pipe.predict(x_test)
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+print("Accuracy Score: {}".format(round(accuracy_score(y_test,
+svc_pred)*100, 2)))
+print("\nConfusion Matrix of SVM Classifier:\n")
+print(confusion_matrix(y_test, svc_pred))
+print("\nClassification Report of SVM Classifier:\n")
+print(classification_report(y_test, svc_pred))
+
+
+================================================================================
+EXPERIMENT 10
+================================================================================
+AIM:
+To classify text data using SVM algorithms.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn
+   - Install (if needed): pip install pandas scikit-learn
+2. Datasets (Fake and Real News dataset):
+   - `True.csv` and `Fake.csv` (columns: title, text, subject, date)
+
+SOURCE CODE:
+Filename: text_classification_svm.py
+--------------------------------------------------------------------------------
+import pandas as pd
+true = pd.read_csv('True.csv')
+fake = pd.read_csv('Fake.csv')
+fake['target'] = 'fake'
+true['target'] = 'true'
+# Concatinate True and Fake to one Data frame news
+news = pd.concat([true,fake]).reset_index(drop = True)
+news.head()
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(news['text'],
+news.target, test_size=0.2, random_state=1)
+# create Model
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.svm import LinearSVC
+
+pipe = Pipeline([('vect',CountVectorizer()),
+                 ('tfidf',TfidfTransformer()),
+                 ('model',LinearSVC())])
+model_svc = pipe.fit(x_train.astype('U'),y_train.astype('U'))
+svc_pred = pipe.predict(x_test.astype('U'))
+# Display accuracy and other Metrics
+from sklearn.metrics import accuracy_score , confusion_matrix , classification_report
+print("Accuracy Score {}".format(round(accuracy_score(y_test,
+svc_pred)*100,2)))
+print("\nConfusion Matrix of SVM Classifier:\n")
+print(confusion_matrix(y_test, svc_pred))
+print("\nClassification Report of SVM Classifier:\n")
+print(classification_report(y_test, svc_pred))
+
+
+================================================================================
+EXPERIMENT 11
+================================================================================
+AIM:
+To understand and implement a basic feedforward neural network.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn, matplotlib, tensorflow / keras
+   - Install (if needed): pip install pandas scikit-learn matplotlib tensorflow
+2. Dataset:
+   - `housepricedata.csv` (LotArea, OverallQual, OverallCond, TotalBsmtSF,
+     FullBath, HalfBath, BedroomAbvGr, TotRmsAbvGrd, Fireplaces, GarageArea,
+     AboveMedianPrice) - the last column is the target.
+
+SOURCE CODE:
+Filename: feedforward_network.py
+--------------------------------------------------------------------------------
+import pandas as pd
+df = pd.read_csv("housepricedata.csv")
+df.describe()
+
+x = df.iloc[:,:10]
+y = df.iloc[:,-1]
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x = sc.fit_transform(x)
+from sklearn.model_selection import train_test_split
+x_train , x_test , y_train ,y_test = train_test_split(x,y,test_size = 0.20)
+# Neural Net Model creation
+from keras.models import Sequential
+from keras.layers import Dense
+model = Sequential([
+    Dense(32,activation = 'relu',input_shape = (10,)),
+    Dense(32,activation = 'relu'),
+    Dense(1,activation = 'sigmoid'),
+])
+#compile Model
+model.compile(optimizer = 'sgd',
+              loss = 'binary_crossentropy',
+              metrics = ['accuracy'])
+history = model.fit(x_train,y_train,
+                    epochs = 30,batch_size = 30,validation_data = (x_test,y_test))
+
+import matplotlib.pyplot as plt
+plt.plot(history.history['accuracy'],label = 'Accuracy training data')
+plt.plot(history.history['val_accuracy'],label = 'Accuracy validation')
+plt.legend()
+plt.show()
+
+
+================================================================================
+EXPERIMENT 12
+================================================================================
+AIM:
+To develop and train a multilayer perceptron model.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn, matplotlib, tensorflow / keras
+   - Install (if needed): pip install pandas scikit-learn matplotlib tensorflow
+2. Dataset:
+   - `Iris - Iris.csv`
+
+SOURCE CODE:
+Filename: multilayer_perceptron.py
+--------------------------------------------------------------------------------
+import pandas as pd
+df = pd.read_csv("Iris - Iris.csv")
+df.describe()
+
+x = df.iloc[:, 1:5].values
+y = df.iloc[:, 5]
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+y = le.fit_transform(y)
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x = sc.fit_transform(x)
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y,
+test_size=0.20, random_state=42)
+# Neural Net Model creation
+from keras.models import Sequential
+from keras.layers import Dense
+
+model = Sequential([
+    Dense(64, activation='relu', input_shape=(4,)),
+    Dense(32, activation='relu'),
+    Dense(16, activation='relu'),
+    Dense(3, activation='softmax')
+])
+# Compile Model
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+# Train the model
+history = model.fit(x_train, y_train,
+                    epochs=30,
+                    batch_size=16,
+                    validation_data=(x_test, y_test))
+
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12, 4))
+# Accuracy plot
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Accuracy training data')
+plt.plot(history.history['val_accuracy'], label='Accuracy validation')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+# Loss plot
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Loss training data')
+plt.plot(history.history['val_loss'], label='Loss validation')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+================================================================================
+EXPERIMENT 13
+================================================================================
+AIM:
+To perform unsupervised learning using K-Means clustering.
+
+README / PREREQUISITES:
+1. Libraries:
+   - pandas, scikit-learn, matplotlib, seaborn
+   - Install (if needed): pip install pandas scikit-learn matplotlib seaborn
+2. Dataset:
+   - `Mall_Customers - Mall_Customers.csv` (CustomerID, Genre, Age,
+     Annual Income (k$), Spending Score (1-100))
+3. Note:
+   - The record's code uses a variable `data` without defining it. The line
+     `data = df[['Annual Income (k$)', 'Spending Score (1-100)']]` has been
+     added below so the program runs (these are the two features plotted on
+     the cluster graph).
+
+SOURCE CODE:
+Filename: kmeans_clustering.py
+--------------------------------------------------------------------------------
+import pandas as pd
+df = pd.read_csv('Mall_Customers - Mall_Customers.csv')
+df.describe()
+
+# Features used for clustering (added so that `data` is defined)
+data = df[['Annual Income (k$)', 'Spending Score (1-100)']]
+
+# Create Elbow Method to Find optimal k value
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+wcss = []
+for i in range(1,11):
+    kmeans = KMeans(n_clusters = i, init = 'k-means++',random_state = 0)
+    kmeans.fit(data)
+    wcss.append(kmeans.inertia_)
+plt.plot(range(1,11),wcss)
+plt.title('The Elbow Method')
+plt.xlabel('Number of Clusters')
+plt.ylabel('WCSS')
+plt.show()
+
+optimal_k = 5
+kmeans = KMeans(n_clusters = optimal_k , init = 'k-means++',random_state = 42 , n_init = 10)
+clusters = kmeans.fit_predict(data)
+df['Cluster'] = clusters
+# plot in graph
+import seaborn as sns
+
+plt.figure(figsize=(10, 8))
+sns.scatterplot(x='Annual Income (k$)', y='Spending Score (1-100)', hue='Cluster', data=df, palette='viridis', s=100)
+plt.scatter(
+        kmeans.cluster_centers_[:,0],
+        kmeans.cluster_centers_[:,1],
+        s=300, c='red',
+        marker='X',
+        label='Centroids')
+plt.title('Customer Segments')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.legend()
+plt.show()
+
+
+================================================================================
+EXPERIMENT 14
+================================================================================
+AIM:
+To implement image classification using Convolutional Neural Networks.
+
+README / PREREQUISITES:
+1. Libraries:
+   - tensorflow, numpy, matplotlib
+   - Install (if needed): pip install tensorflow numpy matplotlib
+2. Dataset:
+   - CIFAR-10 is downloaded automatically by
+     `keras.datasets.cifar10.load_data()` (internet connection required).
+     Shapes: training (50000, 32, 32, 3), test (10000, 32, 32, 3), 10 classes.
+
+SOURCE CODE:
+Filename: cnn_image_classification.py
+--------------------------------------------------------------------------------
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import numpy as np
+import matplotlib.pyplot as plt
+(x_train, y_train), (x_test, y_test) = keras.datasets.cifar10.load_data()
+x_train = x_train.astype('float32') / 255.0
+x_test = x_test.astype('float32') / 255.0
+y_train = keras.utils.to_categorical(y_train, 10)
+y_test = keras.utils.to_categorical(y_test, 10)
+print("Training data shape:", x_train.shape)
+print("Test data shape:", x_test.shape)
+print("Number of classes: 10")
+
+# CNN Model creation
+model = keras.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+# Compile Model
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+# Train the model
+history = model.fit(x_train, y_train,
+                    epochs=15,
+                    batch_size=64,
+                    validation_data=(x_test, y_test))
+
+# Plot training history
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12, 4))
+# Accuracy plot
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Accuracy training data')
+plt.plot(history.history['val_accuracy'], label='Accuracy validation')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+# Loss plot
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Loss training data')
+plt.plot(history.history['val_loss'], label='Loss validation')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.tight_layout()
+plt.show()
+# Evaluate the model
+test_loss, test_accuracy = model.evaluate(x_test, y_test,
+verbose=0)
+print(f"\nTest Accuracy: {test_accuracy:.4f}")
+
+
+================================================================================
+EXPERIMENT 15
+================================================================================
+AIM:
+To process text data using N-grams and POS tagging techniques.
+
+README / PREREQUISITES:
+1. Libraries:
+   - nltk, numpy, pandas, matplotlib, scikit-learn
+   - Install (if needed): pip install nltk numpy pandas matplotlib scikit-learn
+2. NLTK resources (downloaded by the code itself):
+   - punkt, stopwords, averaged_perceptron_tagger
+   - On newer NLTK versions you may also need:
+     nltk.download('punkt_tab') and nltk.download('averaged_perceptron_tagger_eng')
+3. No external dataset is required (a small sample DataFrame is created in code).
+
+SOURCE CODE:
+Filename: nlp_ngrams_pos.py
+--------------------------------------------------------------------------------
+import nltk
+import string
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+print(" NLTK resources downloaded!")
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+
+txt = "Welcome to the domain NLP. Let us do the implementation in python. Python is simple"
+tokenized = sent_tokenize(txt)
+print("Tokenized sentences:", tokenized)
+for i in tokenized:
+    wordsList = nltk.word_tokenize(i)
+    wordsList = [w for w in wordsList if not w in stopwords.words('english')]
+    try:
+        tagged = nltk.pos_tag(wordsList)
+        print("POS tags:", tagged)
+    except:
+        print("Words without POS tags:", wordsList)
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+available_styles = plt.style.available
+print("Available styles:", available_styles[:5])
+plt.style.use('default')
+print(" Libraries imported successfully!")
+
+data = {
+    'Sentiment': ['neutral', 'positive', 'negative', 'positive', 'neutral'],
+    'news': [
+        'According to Gran the company has no plans to move',
+        'With the new production plant the company would increase',
+        'The international electronic industry company announced',
+        'According to the company updated strategy for the',
+        'Technopolis plans to develop in stages an area'
+    ]
+}
+df = pd.DataFrame(data)
+print("DataFrame created:")
+df.head()
+
+df.info()
+print("\nSentiment distribution:")
+print(df['Sentiment'].value_counts())
+
+y = df['Sentiment'].values
+x = df['news'].values
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y,
+test_size=0.4, random_state=42)
+print("Data shapes:")
+print(f"x_train: {x_train.shape}, y_train: {y_train.shape}")
+print(f"x_test: {x_test.shape}, y_test: {y_test.shape}")
+
+df1 = pd.DataFrame(x_train, columns=['news'])
+df2 = pd.DataFrame(y_train, columns=['sentiment'])
+df_train = pd.concat([df1, df2], axis=1)
+print("Training DataFrame:")
+df_train.head()
+
+def generate_N_grams(text, ngram=1):
+    words = [word for word in text.split(" ") if word not in set(stopwords.words('english'))]
+    print("Sentence after removing stopwords:", words)
+    temp = zip(*[words[i:] for i in range(0, ngram)])
+    ans = [' '.join(ngram) for ngram in temp]
+    return ans
+
+# Test N-grams
+print("Testing N-grams:")
+test_text = "The sun rises in the east"
+print(f"Original: {test_text}")
+print("Bigrams:", generate_N_grams(test_text, 2))
+print("Trigrams:", generate_N_grams(test_text, 3))
+
+print("Applying N-grams to training data:")
+for i, news_text in enumerate(df_train['news'].head(3)):
+    print(f"\n--- Example {i+1} ---")
+    print(f"Original: {news_text}")
+    print("Unigrams:", generate_N_grams(news_text, 1))
+    print("Bigrams:", generate_N_grams(news_text, 2))
+
+print("="*60)
+print("PROGRAM EXECUTION COMPLETED SUCCESSFULLY!")
+print("="*60)
+print(" POS Tagging: Completed")
+print(" Data Processing: Successful")
+print(" N-grams Generation: Working")
+print(" All Tasks: Finished")
+print("="*60)
